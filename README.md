@@ -58,7 +58,9 @@ All code used for this study, including model training and evaluation scripts, i
 ```bash
 git clone https://github.com/Abdullah-Tauqeer01/MLP-Mixer
 cd MLP-Mixer
-pip install -r requirements.txt
+conda env create -f env.yml
+conda activate MLP_mixer
+
 mkdire checkpoint
 cd checkpoint
 # Donlowd pretrained weights in this link : https://console.cloud.google.com/storage/browser/mixer_models(For example:wget https://storage.googleapis.com/vit_models/imagenet21k/ViT-B_16.npz)
