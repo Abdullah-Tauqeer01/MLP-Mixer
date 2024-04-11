@@ -6,10 +6,10 @@ import numpy as np
 import torch
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from models.modeling import MlpMixer
+from models.model import MlpMixer
 import models.configs as CONFIGS
 from models.load_weight import load_weights
-from utils.data_utils import get_loader
+from utils.dataloader import get_loader
 from torch.cuda import amp
 from sklearn.metrics import accuracy_score
 import math
