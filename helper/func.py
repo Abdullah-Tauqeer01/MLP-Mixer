@@ -6,10 +6,10 @@ import numpy as np
 import torch
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from models.modeling import MlpMixer
+from models.model import MlpMixer
 import models.configs as CONFIGS
 from models.load_weight import load_weights
-from utils.data_utils import get_loader
+from utils.dataloader import get_loader
 from torch.cuda import amp
 from sklearn.metrics import accuracy_score
 import math
@@ -77,14 +77,15 @@ def evaluate(args, model, test_loader):
                           desc="Validating... (loss=X.X)",
                           bar_format="{l_bar}{r_bar}",
                           dynamic_ncols=True,
-                          disable=args.local_rank not in [-1, 0])
+                          disable=False)
     loss_fct = torch.nn.CrossEntropyLoss()
     eval_loss = 0
     for step, batch in enumerate(epoch_iterator):
         batch = tuple(t.to(args.device) for t in batch)
         x, y = batch
+
         with torch.no_grad():
-            logits = model(x)[0]
+            logits = model(x)
             loss = loss_fct(logits, y)
             eval_loss += loss.item()
             preds = torch.argmax(logits, dim=-1)
@@ -104,8 +105,8 @@ def evaluate(args, model, test_loader):
 
 def set_constant(args):
     args.output_dir = "output"
-    args.train_batch_size = 512
-    args.eval_batch_size = 512
+    args.train_batch_size = 64
+    args.eval_batch_size = 64
     args.eval_every = 100
     args.learning_rate = 3e-2
     args.weight_decay = 0
