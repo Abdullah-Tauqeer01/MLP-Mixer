@@ -82,7 +82,17 @@ def main():
                         help="location to load pretrained weights, "
                         "if they are not already downloaded script will download them to the given directory")
     args = parser.parse_args()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+   
+    num_gpus = torch.cuda.device_count()
+    print(torch.cuda.is_available())
+    # Specify the GPUs you want to use
+    gpu_ids = list(range(num_gpus))
+    
+    # Set the device to the first GPU in the list
+    device = torch.device(f"cuda:{gpu_ids[0]}")
+    
+    print(f"Using GPUs: {gpu_ids}")
+    
     args.n_gpu = torch.cuda.device_count()
     args = set_constant(args)
     args.device = device
