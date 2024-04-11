@@ -8,11 +8,21 @@ This repository contains our reproducibility study for the "MLP-Mixer: An all-ML
 
 MLP-Mixer employs a series of MLP layers to process image patches (tokens) and mix features across channels. The architecture is designed without convolutions or self-attention, making it simpler yet effective for handling vision tasks.
 
+Input: The model accepts a sequence of linearly projected image patches.
+Mixer Layers: Composed of token-mixing MLPs (mix spatial information) and channel-mixing MLPs (mix per-location features), with skip-connections, dropout, and layer normalization.
+Output: Employs global average pooling followed by a fully-connected layer for classification.
+
+![Screenshot from 2024-04-11 15-49-02](https://github.com/Abdullah-Tauqeer01/MLP-Mixer/assets/30385619/8f3c3a57-e87f-44e0-b698-012e5c50c28d)
+
 ## Dataset and Modifications
 
 Due to computational limitations, instead of pretraining from scratch on ImageNet, we used pretrained weights and fine-tuned on:
 - CIFAR-10
 - ImageNet
+
+## Performance
+
+MLP-Mixer achieves near state-of-the-art performance on image classification tasks, with significant improvements when trained on large datasets or with modern regularization schemes. The model has shown to be competitive with both CNNs and Transformer-based models, especially in scenarios involving large-scale datasets.
 
 ## Results
 
@@ -49,6 +59,11 @@ All code used for this study, including model training and evaluation scripts, i
 git clone https://github.com/Abdullah-Tauqeer01/MLP-Mixer
 cd MLP-Mixer
 pip install -r requirements.txt
+mkdire checkpoint
+cd checkpoint
+# Donlowd pretrained weights in this link : https://console.cloud.google.com/storage/browser/mixer_models(For example:wget https://storage.googleapis.com/vit_models/imagenet21k/ViT-B_16.npz)
+cd ..
+python train.py --model_name first_m --Mixer_type B/16 --weight_dir checkpoint/Mixer-B_16.npz
 # Follow specific training and evaluation instructions
 ```
 
