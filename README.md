@@ -1,65 +1,78 @@
-
-# MLP-Mixer: An all-MLP Architecture for Vision
+# MLP-Mixer Reproducibility Study
 
 ## Overview
 
-MLP-Mixer proposes a simple yet effective all-MLP (Multi-Layer Perceptron) architecture for image classification tasks, deviating from conventional CNN (Convolutional Neural Network) and attention-based models. The architecture relies exclusively on MLPs, using two types of layers: channel-mixing MLPs and token-mixing MLPs, facilitating communication between different features and spatial locations, respectively. This architecture has demonstrated competitive performance on various image classification benchmarks while maintaining efficiency in pre-training and inference costs.
+This repository contains our reproducibility study for the "MLP-Mixer: An all-MLP Architecture for Vision" paper by Tolstikhin et al. The MLP-Mixer is a novel architecture that relies solely on multi-layer perceptrons (MLPs) without using convolutions or self-attention layers. Our study aimed to replicate the findings of the original paper under our computational constraints and available resources.
 
 ## Architecture
 
-- **Input**: The model accepts a sequence of linearly projected image patches.
-- **Mixer Layers**: Composed of token-mixing MLPs (mix spatial information) and channel-mixing MLPs (mix per-location features), with skip-connections, dropout, and layer normalization.
-- **Output**: Employs global average pooling followed by a fully-connected layer for classification.
+MLP-Mixer employs a series of MLP layers to process image patches (tokens) and mix features across channels. The architecture is designed without convolutions or self-attention, making it simpler yet effective for handling vision tasks.
 
-![Mixer Architecture](path/to/architecture/diagram.png) *Architecture diagram of MLP-Mixer.*
+## Dataset and Modifications
 
-## Performance
+Due to computational limitations, instead of pretraining from scratch on ImageNet, we used pretrained weights and fine-tuned on:
+- CIFAR-10
+- ImageNet
 
-MLP-Mixer achieves near state-of-the-art performance on image classification tasks, with significant improvements when trained on large datasets or with modern regularization schemes. The model has shown to be competitive with both CNNs and Transformer-based models, especially in scenarios involving large-scale datasets.
+## Results
 
-## Dataset and Pre-training
+Our findings show a decrease in performance compared to the original study:
+- **Top-1 Accuracy on ImageNet**: 73.64% (Original: 76.44%)
+- **Top-5 Accuracy on ImageNet**: 88.70% (Original: 93.63%)
 
-- **Datasets**: ILSVRC2012 ImageNet, ImageNet-21k, and JFT-300M were used for evaluating the performance.
-- **Pre-training Setup**: Models were pre-trained using Adam optimizer, with specific settings for learning rate, weight decay, and other hyperparameters optimized for each dataset.
+The decrease in accuracy is attributed to various factors including limited computational resources and differences in training configurations.
 
-## Reproducibility and Further Exploration
+## Reproduction Details
 
-This section guides the replication of our study and encourages further exploration of the MLP-Mixer architecture.
+### Model Architecture
 
-### Dependencies
+The MLP-Mixer model consists of token-mixing MLPs and channel-mixing MLPs applied sequentially in layers. Each type of MLP mixes information either spatially across tokens or across feature channels.
 
-List the required libraries and their versions, e.g., PyTorch, TensorFlow, JAX, etc.
+### Hardware Setup
 
-### Preparing the Dataset
+Our experiments were conducted using a cluster of 2 RTX 8090 GPUs.
 
-Instructions on how to access and prepare the datasets used for training and evaluation.
+### Pre-training and Fine-tuning
 
-### Training the Model
+We utilized pretrained models from the original authors, specifically the MLP-Mixer-B/16 and MLP-Mixer-L/16, pretrained on the ImageNet-21k dataset. These models were then fine-tuned on CIFAR-10 and ImageNet under the following configurations:
+- **Optimizer**: Momentum SGD
+- **Batch Size**: 512
+- **Learning Rate**: Adjusted via a cosine schedule with linear warmup
+- **Gradient Clipping**: At global norm 1
+- **Weight Decay**: None
 
-Steps to initialize the training environment, including setting up the model architecture and specifying hyperparameters.
+### Code
+
+All code used for this study, including model training and evaluation scripts, is available in this repository. You can clone and follow the instructions to replicate our results or explore further:
 
 ```bash
-python train.py --dataset ImageNet --model MLP-Mixer --epochs 300
+git clone https://github.com/Abdullah-Tauqeer01/MLP-Mixer
+cd MLP-Mixer
+pip install -r requirements.txt
+# Follow specific training and evaluation instructions
 ```
 
-### Evaluation
+## Discussion
 
-Guide on evaluating the model on benchmark datasets and calculating performance metrics.
+This study highlights challenges in reproducing the exact performance of novel architectures like MLP-Mixer, especially under resource constraints. Differences in hardware, training duration, and potentially unreported details in the original implementation may influence outcomes.
 
-```bash
-python evaluate.py --dataset ImageNet --model_path path/to/model.pth
-```
-
-### Further Research Directions
-
-- **Scaling to Larger Datasets**: Investigate the performance of MLP-Mixer on datasets larger than JFT-300M.
-- **Architecture Variations**: Explore the effects of modifying the token-mixing and channel-mixing MLPs.
-- **Transfer Learning**: Assess the model's capability in transfer learning scenarios across diverse visual tasks.
 
 ## Citation
 
-Provide a BibTeX entry or another citation format for referencing your study and the original MLP-Mixer paper.
-
-## Acknowledgments
-
-Acknowledge the contributions of team members, institutions, and any funding sources.
+If you find this study useful, please cite the original paper and our reproducibility study as follows:
+```bibtex
+@article{originalmlpmixer,
+  title={MLP-Mixer: An all-MLP Architecture for Vision},
+  author={Tolstikhin, Ilya and others},
+  journal={arXiv preprint arXiv:2105.01601},
+  year={2021}
+}
+@misc{reproducibilitystudy,
+  title={Reproducibility Study of MLP-Mixer},
+  author={Tauqeera, Abdullah and Taherkhani, Hamed},
+  year={2021},
+  publisher={GitHub},
+  journal={GitHub repository},
+  howpublished={\url{https://github.com/Abdullah-Tauqeer01/MLP-Mixer}}
+}
+```
